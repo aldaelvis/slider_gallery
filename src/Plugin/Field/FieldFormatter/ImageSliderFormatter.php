@@ -120,7 +120,7 @@ class ImageSliderFormatter extends FormatterBase
       '#theme' => 'image_slider',
       '#images' => $images,
       // Usamos un identificador único para diferenciar instancias (por ejemplo, el field name y delta).
-      '#slider_id' => md5(implode('-', $images)),
+      '#slider_id' => $this->fieldDefinition->getName() . '-' . uniqid(),
       '#attached' => [
         'library' => [
           'slider_gallery/slider',
