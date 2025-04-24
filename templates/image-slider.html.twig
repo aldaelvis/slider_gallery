@@ -1,0 +1,25 @@
+<div class="slider-module" id="slider-{{ slider_id }}">
+  <div class="slides-module" id="slides-{{ slider_id }}">
+    {% for image in images %}
+      <div class="slide-module">
+        {% if image.link_url %}
+          <a href="{{ image.link_url }}">
+            <img src="{{ image.image_url }}" alt="">
+          </a>
+        {% else %}
+          <img src="{{ image.image_url }}" alt="">
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+ {# <button class="nav-button prev" data-action="prev" data-slider-id="{{ slider_id }}" onclick="changeSlide(-1, '{{ slider_id }}')">❮</button> #}
+  <button class="nav-button prev" data-action="prev" data-slider-id="{{ slider_id }}">❮</button>
+  {#  <button class="nav-button next" data-action="next" data-slider-id="{{ slider_id }}" onclick="changeSlide(1, '{{ slider_id }}')">❯</button> #}
+
+  <button class="nav-button next" data-action="next" data-slider-id="{{ slider_id }}">❯</button>
+</div>
+<div class="thumbnails" id="thumbnails-{{ slider_id }}">
+  {% for image in images %}
+    <div class="thumbnail"><img src="{{ image.image_url }}" alt=""></div>
+  {% endfor %}
+</div>

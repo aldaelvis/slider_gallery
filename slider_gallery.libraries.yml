@@ -1,0 +1,9 @@
+slider:
+  version: 1.x
+  css:
+    theme:
+      css/slider-gallery.css: {}
+  js:
+    js/slider-gallery.js: {}
+  dependencies:
+    - core/drupal

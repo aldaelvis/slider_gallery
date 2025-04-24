@@ -1,0 +1,13 @@
+<?php
+
+function slider_gallery_theme($existing, $type, $theme, $path) {
+  return [
+    'image_slider' => [
+      'variables' => [
+        'images' => NULL,
+        'slider_id' => NULL,
+      ],
+      'template' => 'image-slider',
+    ],
+  ];
+}

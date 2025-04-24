@@ -1,0 +1,5 @@
+name: 'Image Slider Gallery'
+type: module
+description: 'Gestionar la presentacion de las imagenes en formato de galeria'
+core_version_requirement: ^10 || ^11
+package: Custom
