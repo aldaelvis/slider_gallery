@@ -6,6 +6,8 @@ use Drupal\Core\Field\Annotation\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Image\ImageFactory;
+use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
 
 /**
@@ -30,6 +32,7 @@ class ImageSliderFormatter extends FormatterBase
     return array_merge(parent::defaultSettings(), [
       'items_to_show' => 5,  // Valor predeterminado: mostrar 5 imágenes
       'link_behavior' => 'none',
+      'image_style' => '',
     ]);
   }
 
@@ -39,6 +42,20 @@ class ImageSliderFormatter extends FormatterBase
   public function settingsForm(array $form, FormStateInterface $form_state)
   {
     $elements = parent::settingsForm($form, $form_state);
+
+    $image_styles = ImageStyle::loadMultiple();
+    $options = ['' => $this->t('- Sin estilo -')];
+    foreach ($image_styles as $style_id => $style) {
+      $options[$style_id] = $style->label();
+    }
+
+    $elements['image_style'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Estilo de imagen'),
+      '#default_value' => $this->getSetting('image_style'),
+      '#options' => $options,
+      '#description' => $this->t('Selecciona un estilo de imagen para aplicar al slider.'),
+    ];
 
     // Campo para seleccionar la cantidad de imágenes a mostrar
     $elements['items_to_show'] = [
@@ -78,6 +95,12 @@ class ImageSliderFormatter extends FormatterBase
       'content' => $this->t('Las imágenes enlazan al contenido.'),
       default => $this->t('Las imágenes no tienen enlace.'),
     };
+
+    $image_style = $this->getSetting('image_style');
+    $summary[] = $image_style
+      ? $this->t('Estilo de imagen: @style', ['@style' => $image_style])
+      : $this->t('Sin estilo de imagen.');
+
     return $summary;
   }
 
@@ -86,6 +109,8 @@ class ImageSliderFormatter extends FormatterBase
     $images = [];
     $items_to_show = $this->getSetting('items_to_show');
     $link_behavior = $this->getSetting('link_behavior');
+    $image_style = $this->getSetting('image_style');
+
     foreach ($items as $index => $item) {
       if ($index >= $items_to_show) {
         break;  // Detener el ciclo si ya hemos mostrado la cantidad configurada de imágenes
@@ -93,7 +118,13 @@ class ImageSliderFormatter extends FormatterBase
 
       $file = $item->entity;
       if ($file) {
-        $imageUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+        // $imageUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+
+        if ($image_style && ImageStyle::load($image_style)) {
+          $imageUrl = ImageStyle::load($image_style)->buildUrl($file->getFileUri());
+        } else {
+          $imageUrl = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+        }
         $linkUrl = null;
 
         switch ($link_behavior) {
